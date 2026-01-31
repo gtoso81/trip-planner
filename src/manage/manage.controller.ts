@@ -36,7 +36,7 @@ export class ManageController {
     }
 
     @Put(':id')
-    @ApiOperation({ summary: 'Update a trip' })
+    @ApiOperation({ summary: 'Update a trip, the body in the request contains all the fields that have to be updated' })
     @ApiOkResponse({description: 'Updated the requested trip'})
     @ApiBadRequestResponse({description: 'Bad request'})
     @ApiNotFoundResponse({description: 'Requested trip not found'})
