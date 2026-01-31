@@ -1,7 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {IsString, IsEnum, IsIn, IsOptional } from 'class-validator';
 
-const ALLOWED_IATA = [
+export const ALLOWED_IATA = [
     "ATL", "PEK", "LAX", "DXB", "HND", "ORD", "LHR", "PVG", "CDG", "DFW",
     "AMS", "FRA", "IST", "CAN", "JFK", "SIN", "DEN", "ICN", "BKK", "SFO",
     "LAS", "CLT", "MIA", "KUL", "SEA", "MUC", "EWR", "MAD", "HKG", "MCO",
@@ -15,12 +15,10 @@ export enum SortBy {
 }
 
 export class SearchDto {
-    @IsString()
     @IsIn(ALLOWED_IATA)
     @ApiProperty({ example: 'MUC', description: 'The origin of the trip, IATA code' })
     origin: string;
 
-    @IsString()
     @IsIn(ALLOWED_IATA)
     @ApiProperty({ example: 'FRA', description: 'The destination of the trip, IATA code' })
     destination: string;
