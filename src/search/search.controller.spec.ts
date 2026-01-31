@@ -14,6 +14,7 @@ describe('SearchController', () => {
   }
 
   beforeEach(async () => {
+    jest.clearAllMocks();
     const module: TestingModule = await Test.createTestingModule({
       controllers: [SearchController],
       providers: [
@@ -32,7 +33,7 @@ describe('SearchController', () => {
     expect(controller).toBeDefined();
   });
 
-  it('should return an array of users', async () => {
+  it('should return an array of trips', async () => {
     const trips: TripDto[] = mockTrips;
     mockSearchService.getTrips.mockReturnValue(trips);
     const search: SearchDto = mockSearch;

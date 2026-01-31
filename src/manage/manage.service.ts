@@ -9,11 +9,11 @@ import { UpdateTripDto } from './dto/update-trip.dto';
 export class ManageService {
     constructor(@InjectModel(Trip.name) private tripModel: Model<Trip>,) {}
 
-    save(createTrip: CreateTripDto): Promise<Trip> {
+    create(createTrip: CreateTripDto): Promise<Trip> {
         return this.tripModel.create(createTrip);
     }
 
-    list(): Promise<Trip[]> {
+    findAll(): Promise<Trip[]> {
         return this.tripModel.find().exec();
     }
 
@@ -25,7 +25,7 @@ export class ManageService {
         return result;
     }
 
-    async get(id: string): Promise<Trip> {
+    async findOne(id: string): Promise<Trip> {
         const result = await this.tripModel.findById(id).exec();
         if (!result) {
             throw new NotFoundException(`Trip ID ${id} not found`);

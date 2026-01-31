@@ -3,7 +3,16 @@ import { HydratedDocument } from "mongoose";
 
 export type TripDocument = HydratedDocument<Trip>;
 
-@Schema()
+@Schema({ 
+  toJSON: { 
+    virtuals: true, 
+    versionKey: false,
+    transform: (_, obj) => {
+      const { _id, ...rest } = obj;
+      return rest;
+    },
+  } 
+})
 export class Trip {
 
     @Prop({ required: true })

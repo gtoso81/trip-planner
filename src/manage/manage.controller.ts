@@ -8,13 +8,13 @@ export class ManageController {
     constructor(private manageService: ManageService) {}
 
     @Post()
-    save(@Body() createTrip: CreateTripDto) {
-        return this.manageService.save(createTrip);
+    create(@Body() createTrip: CreateTripDto) {
+        return this.manageService.create(createTrip);
     }
 
     @Get()
-    list() {
-        return this.manageService.list();
+    findAll() {
+        return this.manageService.findAll();
     }
 
     @Delete(':id')
@@ -23,8 +23,8 @@ export class ManageController {
     }
 
     @Get(':id')
-    get(@Param('id') id: string) {
-        return this.manageService.get(id);
+    findOne(@Param('id') id: string) {
+        return this.manageService.findOne(id);
     }
 
     @Put(':id')
