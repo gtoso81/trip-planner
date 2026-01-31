@@ -25,8 +25,8 @@ Make a .env file starting from .env.example and fill in the values for X_API_KEY
 For MONGODB_URL can be used the one provided by docker-compose `mongodb://localhost:27017/trip-planner`
 
 ## Run Docker
+This project leverages a MongoDB provided with Docker, to run it you have to have Docker installed 
 ```bash
-# This project leverages a MongoDB provided with Docker, to run it you have to have Docker installed 
 $ docker-compose up -d
 ```
 
