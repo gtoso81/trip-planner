@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
@@ -10,6 +10,8 @@ import { Trip } from 'src/manage/schema/trip.schema';
 export class SearchService {
     constructor(private configService: ConfigService, private httpService: HttpService) {}
 
+    private readonly logger = new Logger(SearchService.name);
+
     getFromEnv(key:string) :string {
         const val = this.configService.get<string>(key);
          if (!val) {
@@ -18,36 +20,41 @@ export class SearchService {
         return val;
     }
 
-    async getTrips(search:SearchDto):Promise<TripDto[]>{
-        const searchUrl = this.getFromEnv('SEARCH_URL');
-        const xApiKey = this.getFromEnv('X_API_KEY');
+    async getTrips(search:SearchDto): Promise<TripDto[]> {
+        try {
+            const searchUrl = this.getFromEnv('SEARCH_URL');
+            const xApiKey = this.getFromEnv('X_API_KEY');
 
-        const {origin, destination, sort_by} = search;
-        
-        const { data } = await firstValueFrom(
-            this.httpService.get(searchUrl, {
-                params: {
-                    origin,
-                    destination
-                },
-                headers: {
-                    'x-api-key': xApiKey
-                }
-            })
-        );
-        
-        return this.sortData(sort_by, data);
+            const {origin, destination, sort_by} = search;
+            
+            const { data } = await firstValueFrom(
+                this.httpService.get(searchUrl, {
+                    params: {
+                        origin,
+                        destination
+                    },
+                    headers: {
+                        'x-api-key': xApiKey
+                    }
+                })
+            );
+            
+            return sort_by ? this.sortData(sort_by, data) : data;
+        } catch (err) {
+            this.logger.error(`error during trips serch: ${err.message}`);
+            throw new Error('Error while invoking trips search', err);
+        }
     }
 
-    sortData(sort_by:SortBy, data: TripDto[]): TripDto[] {
+    sortData(sort_by: SortBy, data: TripDto[]): TripDto[] {
         const sortMap = {
             [SortBy.Fastest]: "duration",
             [SortBy.Cheapest]: "cost"
         };
         const prop = sortMap[sort_by];
-        const sortedData = data.sort((a,b) => {
-            return a[prop] -b[prop];
-        })
-        return sortedData;
+        data.sort((a,b) => {
+            return a[prop] - b[prop];
+        });
+        return data;
     }
 }

@@ -21,16 +21,16 @@ export class Trip {
     @Prop({ required: true })
     destination: string;
 
-    @Prop()
+    @Prop({ required: true })
     cost: number;
 
-    @Prop()
+    @Prop({ required: true })
     duration: number;
 
-    @Prop()
+    @Prop({ required: true })
     type: string;
     
-    @Prop()
+    @Prop({ required: true })
     display_name: string;
 }
 
