@@ -3,7 +3,7 @@ import { ManageService } from './manage.service';
 import { Model } from 'mongoose';
 import { Trip } from './schema/trip.schema';
 import { getModelToken } from '@nestjs/mongoose';
-import { mockCreateDto, mockFindAllResponse, mockTripResponse } from './manage.mock';
+import { mockCreateDto, mockFindAllResponse, mockFindAllResponseService, mockTripResponse, mockTripResponseService } from './manage.mock';
 import { NotFoundException } from '@nestjs/common';
 
 describe('ManageService', () => {
@@ -17,6 +17,7 @@ describe('ManageService', () => {
     findByIdAndDelete: jest.fn(),
     findByIdAndUpdate: jest.fn(),
     exec: jest.fn(),
+    lean: jest.fn()
   };
 
   beforeEach(async () => {
@@ -40,14 +41,16 @@ describe('ManageService', () => {
   describe('happy path flows', () => {
     it('should create a trip', async () => {
       const createDto = mockCreateDto;
-      mockTripModel.create.mockResolvedValue(mockTripResponse);
+      mockTripModel.create.mockResolvedValue(mockTripResponseService);
       const result = await service.create(createDto);
       expect(result).toEqual(mockTripResponse);
     });
 
     it('should list all trips', async () => {
       mockTripModel.find.mockReturnValue({
-        exec: jest.fn().mockResolvedValue(mockFindAllResponse),
+        lean: jest.fn().mockReturnValue({
+          exec: jest.fn().mockResolvedValue(mockFindAllResponseService),
+        })
       });
       const result = await service.findAll();
       expect(result).toEqual(mockFindAllResponse);
@@ -55,7 +58,9 @@ describe('ManageService', () => {
 
     it('should get a trip', async () => {
       mockTripModel.findById.mockReturnValue({
-        exec: jest.fn().mockResolvedValue(mockTripResponse),
+        lean: jest.fn().mockReturnValue({
+          exec: jest.fn().mockResolvedValue(mockTripResponseService),
+        })
       });
       const result = await service.findOne('697d1ecb2ada36108b0ad534');
       expect(result).toEqual(mockTripResponse);
@@ -63,7 +68,7 @@ describe('ManageService', () => {
 
     it('should update a trip', async () => {
       mockTripModel.findByIdAndUpdate.mockReturnValue({
-        exec: jest.fn().mockResolvedValue({...mockTripResponse, cost:20000}),
+        exec: jest.fn().mockResolvedValue({...mockTripResponseService, cost:20000}),
       });
       const result = await service.update('697d1ecb2ada36108b0ad534', {cost:20000});
       expect(result).toEqual({...mockTripResponse, cost:20000});
@@ -71,7 +76,7 @@ describe('ManageService', () => {
 
     it('should delete and return the trip', async () => {
       mockTripModel.findByIdAndDelete.mockReturnValue({
-        exec: jest.fn().mockResolvedValue(mockTripResponse),
+        exec: jest.fn().mockResolvedValue(mockTripResponseService),
       });
       const result = await service.delete('697d1ecb2ada36108b0ad534');
       expect(result).toEqual(mockTripResponse);
@@ -82,7 +87,9 @@ describe('ManageService', () => {
     it('should throw NotFoundException if trip does not exist for get', async () => {
       const id = 'id-not-in-db';
       mockTripModel.findById.mockReturnValue({
-        exec: jest.fn().mockResolvedValue(null),
+        lean: jest.fn().mockReturnValue({
+          exec: jest.fn().mockResolvedValue(null),
+        })
       });
       expect(service.findOne(id)).rejects.toThrow(NotFoundException);
       expect(service.findOne(id)).rejects.toThrow(`Trip ID ${id} not found`);
