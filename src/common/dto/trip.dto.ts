@@ -1,4 +1,4 @@
-export class Trip {
+export class TripDto {
     origin: string;
     destination: string;
     cost: number;

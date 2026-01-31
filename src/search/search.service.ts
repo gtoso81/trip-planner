@@ -2,8 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
-import { Trip } from './dto/trip';
+import { TripDto } from '../common/dto/trip.dto';
 import { SearchDto, SortBy } from './dto/search-dto';
+import { Trip } from 'src/manage/schema/trip.schema';
 
 @Injectable()
 export class SearchService {
@@ -17,7 +18,7 @@ export class SearchService {
         return val;
     }
 
-    async getTrips(search:SearchDto):Promise<Trip[]>{
+    async getTrips(search:SearchDto):Promise<TripDto[]>{
         const searchUrl = this.getFromEnv('SEARCH_URL');
         const xApiKey = this.getFromEnv('X_API_KEY');
 
@@ -38,7 +39,7 @@ export class SearchService {
         return this.sortData(sort_by, data);
     }
 
-    sortData(sort_by:SortBy, data: Trip[]) {
+    sortData(sort_by:SortBy, data: TripDto[]): TripDto[] {
         const sortMap = {
             [SortBy.Fastest]: "duration",
             [SortBy.Cheapest]: "cost"

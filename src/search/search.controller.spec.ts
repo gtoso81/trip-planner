@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { SearchController } from './search.controller';
 import { SearchService } from './search.service';
 import { SearchDto } from './dto/search-dto';
-import { Trip } from './dto/trip';
+import { TripDto } from '../common/dto/trip.dto';
 import { mockSearch, mockTrips } from './search.mock';
 
 describe('SearchController', () => {
@@ -33,7 +33,7 @@ describe('SearchController', () => {
   });
 
   it('should return an array of users', async () => {
-    const trips: Trip[] = mockTrips;
+    const trips: TripDto[] = mockTrips;
     mockSearchService.getTrips.mockReturnValue(trips);
     const search: SearchDto = mockSearch;
     const result = controller.getTrips(search);

@@ -1,7 +1,7 @@
 import { SearchDto, SortBy } from "./dto/search-dto";
-import { Trip } from "./dto/trip";
+import { TripDto } from "../common/dto/trip.dto";
 
-export const mockTrips: Trip[] = [{
+export const mockTrips: TripDto[] = [{
     origin: "MUC",
     destination: "FRA",
     cost: 4682,
@@ -39,7 +39,7 @@ export const mockTrips: Trip[] = [{
 }];
 
 
-export const mockTripsSortedByFastest: Trip[] = [
+export const mockTripsSortedByFastest: TripDto[] = [
 {
     origin: "MUC",
     destination: "FRA",
@@ -77,7 +77,7 @@ export const mockTripsSortedByFastest: Trip[] = [
     display_name: "from MUC to FRA by train"
 }];
 
-export const mockTripsSortedByCheapest: Trip[] = [{
+export const mockTripsSortedByCheapest: TripDto[] = [{
     origin: "MUC",
     destination: "FRA",
     cost: 1116,
