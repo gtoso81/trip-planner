@@ -22,7 +22,7 @@ export const mockTrips: TripDto[] = [{
 {
     origin: "MUC",
     destination: "FRA",
-    cost: 1116,
+    cost: 2200,
     duration: 14,
     type: "train",
     id: "e5ca4486-00b9-438b-b665-479bc60abd28",
@@ -43,7 +43,7 @@ export const mockTripsSortedByFastest: TripDto[] = [
 {
     origin: "MUC",
     destination: "FRA",
-    cost: 1116,
+    cost: 2200,
     duration: 14,
     type: "train",
     id: "e5ca4486-00b9-438b-b665-479bc60abd28",
@@ -80,19 +80,19 @@ export const mockTripsSortedByFastest: TripDto[] = [
 export const mockTripsSortedByCheapest: TripDto[] = [{
     origin: "MUC",
     destination: "FRA",
-    cost: 1116,
-    duration: 14,
+    cost: 2004,
+    duration: 17,
     type: "train",
-    id: "e5ca4486-00b9-438b-b665-479bc60abd28",
+    id: "b4a0fa65-a64f-4f63-89d9-ff22a97a91ee",
     display_name: "from MUC to FRA by train"
 },
 {
     origin: "MUC",
     destination: "FRA",
-    cost: 2004,
-    duration: 17,
+    cost: 2200,
+    duration: 14,
     type: "train",
-    id: "b4a0fa65-a64f-4f63-89d9-ff22a97a91ee",
+    id: "e5ca4486-00b9-438b-b665-479bc60abd28",
     display_name: "from MUC to FRA by train"
 },
 {
@@ -114,4 +114,4 @@ export const mockTripsSortedByCheapest: TripDto[] = [{
     display_name: "from MUC to FRA by train"
 }];
 
-export const mockSearch: SearchDto = {origin:'MUC', destination:'FRA', sort_by: SortBy.Fastest};
+export const mockSearch: SearchDto = {origin:'MUC', destination:'FRA'};

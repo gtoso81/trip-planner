@@ -5,6 +5,7 @@ import { HttpService } from '@nestjs/axios';
 import { mockSearch, mockTrips, mockTripsSortedByCheapest, mockTripsSortedByFastest } from './search.mock';
 import { of } from 'rxjs';
 import { AxiosResponse } from 'axios';
+import { SortBy } from './dto/search-dto';
 
 describe('SearchService', () => {
   let service: SearchService;
@@ -70,7 +71,7 @@ describe('SearchService', () => {
 
   it('should return and sort correctly as fastest', async () => {
     const trips = mockTrips;
-    const search = mockSearch;
+    const search = {...mockSearch, sort_by: SortBy.Fastest};
 
     jest.spyOn(httpService, 'get').mockReturnValue(of(mockAxiosResponse(trips)));
 
@@ -80,7 +81,7 @@ describe('SearchService', () => {
 
   it('should return and sort correctly as cheapest', async () => {
     const trips = mockTrips;
-    const search = mockSearch;
+    const search = {...mockSearch, sort_by: SortBy.Cheapest};
 
     jest.spyOn(httpService, 'get').mockReturnValue(of(mockAxiosResponse(trips)));
 

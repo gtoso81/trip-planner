@@ -26,7 +26,7 @@ export class SearchDto {
     destination: string;
 
     @IsEnum(SortBy)
-    @ApiPropertyOptional({ example: 'fastest', description: 'The desired sorting method for the trips' })
+    @ApiPropertyOptional({ example: 'fastest', description: `The desired sorting method for the trips, could be 'fastest' or 'cheapest'` })
     @IsOptional()
-    sort_by: SortBy;
+    sort_by?: SortBy;
 }
