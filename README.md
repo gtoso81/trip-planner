@@ -55,4 +55,4 @@ When the app is running you can find a Swagger with the API documentation at thi
 
 The available routes are:
 * `/search`: to query the 3rd party API 
-* `/manage`: to perform CRUD operations that let the user save, list, get a single saved trip, update it or delete it
+* `/manage`: to perform CRUD operations that let the user save, list, get a single saved trip, update it or delete it; implemented using CQRS

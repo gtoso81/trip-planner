@@ -1,22 +1,27 @@
 import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
-import { ManageService } from './manage.service';
 import { CreateTripDto } from './dto/create-trip.dto';
 import { UpdateTripDto } from './dto/update-trip.dto';
 import { ApiBadRequestResponse, ApiCreatedResponse, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ParseObjectIdPipe } from '@nestjs/mongoose';
 import { TripDto } from '../common/dto/trip.dto';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
+import { UpdateTripCommand } from './commands/impl/update-trip.command';
+import { DeleteTripCommand } from './commands/impl/delete-trip.command';
+import { CreateTripCommand } from './commands/impl/create-trip.command';
+import { FindAllTripsQuery } from './queries/impl/find-all-trips.query';
+import { FindOneTripQuery } from './queries/impl/find-one-trip.query';
 
 @ApiTags('trips')
 @Controller('manage')
 export class ManageController {
-    constructor(private manageService: ManageService) {}
+    constructor(private commandBus: CommandBus, private queryBus: QueryBus) {}
 
     @Post()
     @ApiOperation({ summary: 'Create a new trip' })
     @ApiCreatedResponse({description: 'Trip created successfully', type: TripDto})
     @ApiBadRequestResponse({description: 'Bad request'})
     create(@Body() createTrip: CreateTripDto) {
-        return this.manageService.create(createTrip);
+        return this.commandBus.execute(new CreateTripCommand(createTrip));
     }
 
     @Get()
@@ -24,7 +29,7 @@ export class ManageController {
     @ApiOkResponse({description: 'Returned all saved trips', type: [TripDto]})
     @ApiBadRequestResponse({description: 'Bad request'})
     findAll() {
-        return this.manageService.findAll();
+        return this.queryBus.execute(new FindAllTripsQuery());
     }
 
     @Get(':id')
@@ -33,7 +38,7 @@ export class ManageController {
     @ApiBadRequestResponse({description: 'Bad request'})
     @ApiNotFoundResponse({description: 'Requested trip not found'})
     findOne(@Param('id', ParseObjectIdPipe) id: string) {
-        return this.manageService.findOne(id);
+        return this.queryBus.execute(new FindOneTripQuery(id));
     }
 
     @Put(':id')
@@ -42,7 +47,7 @@ export class ManageController {
     @ApiBadRequestResponse({description: 'Bad request'})
     @ApiNotFoundResponse({description: 'Requested trip not found'})
     update(@Param('id', ParseObjectIdPipe) id: string, @Body() updateTrip: UpdateTripDto) {
-        return this.manageService.update(id, updateTrip);
+        return this.commandBus.execute(new UpdateTripCommand(id, updateTrip));
     }
 
     @Delete(':id')
@@ -51,6 +56,6 @@ export class ManageController {
     @ApiBadRequestResponse({description: 'Bad request'})
     @ApiNotFoundResponse({description: 'Requested trip not found'})
     delete(@Param('id', ParseObjectIdPipe) id: string) {
-        return this.manageService.delete(id);
+        return this.commandBus.execute(new DeleteTripCommand(id));
     }
 }
