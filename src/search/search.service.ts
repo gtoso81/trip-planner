@@ -3,8 +3,8 @@ import { ConfigService } from '@nestjs/config';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
 import { TripDto } from '../common/dto/trip.dto';
-import { SearchDto, SortBy } from './dto/search-dto';
-import { Trip } from 'src/manage/schema/trip.schema';
+import { SearchDto } from './dto/search-dto';
+import { sortData } from '../common/utils';
 
 @Injectable()
 export class SearchService {
@@ -39,22 +39,10 @@ export class SearchService {
                 })
             );
             
-            return sort_by ? this.sortData(sort_by, data) : data;
+            return sort_by ? sortData(sort_by, data) : data;
         } catch (err) {
             this.logger.error(`error during trips serch: ${err.message}`);
             throw new Error('Error while invoking trips search', err);
         }
-    }
-
-    sortData(sort_by: SortBy, data: TripDto[]): TripDto[] {
-        const sortMap = {
-            [SortBy.Fastest]: "duration",
-            [SortBy.Cheapest]: "cost"
-        };
-        const prop = sortMap[sort_by];
-        data.sort((a,b) => {
-            return a[prop] - b[prop];
-        });
-        return data;
     }
 }
