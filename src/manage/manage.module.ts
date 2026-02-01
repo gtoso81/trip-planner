@@ -5,6 +5,7 @@ import { Trip, TripSchema } from './schema/trip.schema';
 import { CommandHandlers } from './commands/handlers';
 import { QueryHandlers } from './queries/handlers';
 import { CqrsModule } from '@nestjs/cqrs';
+import { TripRepository } from './trip.repository';
 
 @Module({
   imports: [
@@ -14,7 +15,8 @@ import { CqrsModule } from '@nestjs/cqrs';
   controllers: [ManageController],
   providers:[
     ...CommandHandlers,
-    ...QueryHandlers
+    ...QueryHandlers,
+    TripRepository
   ]
 })
 export class ManageModule {}

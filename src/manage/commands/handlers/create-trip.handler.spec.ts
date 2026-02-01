@@ -1,14 +1,13 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { getModelToken } from '@nestjs/mongoose';
-import { Trip } from '../../schema/trip.schema';
-import { mockCreateDto, mockTripResponse, mockTripResponseService } from '../../manage.mock';
+import { mockCreateDto, mockTripResponse, mockTripResponseDB } from '../../manage.mock';
 import { CreateTripHandler } from './create-trip.handler';
 import { CreateTripCommand } from '../impl/create-trip.command';
+import { TripRepository } from '../../trip.repository';
 
 describe('CreateTripHandler', () => {
   let handler: CreateTripHandler;
 
-  const mockTripModel = {
+  const mockTripRepository = {
     create: jest.fn(),
   };
 
@@ -17,8 +16,8 @@ describe('CreateTripHandler', () => {
       providers: [
         CreateTripHandler,
         {
-          provide: getModelToken(Trip.name),
-          useValue: mockTripModel,
+          provide: TripRepository,
+          useValue: mockTripRepository,
         },
       ],
     }).compile();
@@ -28,7 +27,7 @@ describe('CreateTripHandler', () => {
 
   it('should create a trip', async () => {
     const createDto = mockCreateDto;
-    mockTripModel.create.mockResolvedValue(mockTripResponseService);
+    mockTripRepository.create.mockResolvedValue(mockTripResponseDB);
     const result = await handler.execute(new CreateTripCommand(createDto));
     expect(result).toEqual(mockTripResponse);
   });

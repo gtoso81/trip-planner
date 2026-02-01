@@ -1,25 +1,24 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { getModelToken } from '@nestjs/mongoose';
 import { UpdateTripHandler } from './update-trip.handler';
 import { UpdateTripCommand } from '../impl/update-trip.command';
-import { Trip } from '../../schema/trip.schema';
 import { NotFoundException } from '@nestjs/common';
-import { mockTripResponse, mockTripResponseService } from '../../manage.mock';
+import { mockTripResponse, mockTripResponseDB } from '../../manage.mock';
+import { TripRepository } from '../../trip.repository';
 
 describe('UpdateTripHandler', () => {
   let handler: UpdateTripHandler;
 
-  const mockTripModel = {
-    findByIdAndUpdate: jest.fn(),
+  const mockTripRepository = {
+    update: jest.fn(),
   };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         UpdateTripHandler,
-        {
-          provide: getModelToken(Trip.name),
-          useValue: mockTripModel,
+       {
+          provide: TripRepository,
+          useValue: mockTripRepository,
         },
       ],
     }).compile();
@@ -28,20 +27,13 @@ describe('UpdateTripHandler', () => {
   });
 
   it('should update and return a trip', async () => {
-
-    mockTripModel.findByIdAndUpdate.mockReturnValue({
-      exec: jest.fn().mockResolvedValue({ ...mockTripResponseService, cost: 20000 }),
-    });
+    mockTripRepository.update.mockResolvedValue({ ...mockTripResponseDB, cost: 20000 });
     const result = await handler.execute(new UpdateTripCommand('697d1ecb2ada36108b0ad534', { cost: 20000 }));
     expect(result).toEqual({ ...mockTripResponse, cost: 20000 });
   });
 
   it('should throw NotFoundException if trip does not exist', async () => {
-    const id = 'id-not-in-db';
-    mockTripModel.findByIdAndUpdate.mockReturnValue({
-      exec: jest.fn().mockResolvedValue(null),
-    });
-
-    await expect(handler.execute(new UpdateTripCommand(id, { cost: 10 }))).rejects.toThrow(NotFoundException);
+    mockTripRepository.update.mockResolvedValue(null);
+    await expect(handler.execute(new UpdateTripCommand('id-not-in-db', { cost: 10 }))).rejects.toThrow(NotFoundException);
   });
 });

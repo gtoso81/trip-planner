@@ -17,7 +17,7 @@ export const mockTripResponse = {
     id:"697d1ecb2ada36108b0ad534"
 };
 
-export const mockTripResponseService = {
+export const mockTripResponseDB = {
     origin: "CAN",
     destination: "LGW",
     cost: 4223,
@@ -60,7 +60,7 @@ export const mockFindAllResponse = [
 ];
 
 
-export const mockFindAllResponseService = [
+export const mockFindAllResponseDB = [
     {
         origin: "MUC",
         destination: "FRA",

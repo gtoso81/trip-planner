@@ -1,15 +1,14 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { getModelToken } from '@nestjs/mongoose';
 import { FindOneTripHandler } from './find-one-trip.handler';
 import { FindOneTripQuery } from '../impl/find-one-trip.query';
-import { Trip } from '../../schema/trip.schema';
-import { mockTripResponse, mockTripResponseService } from '../../manage.mock';
+import { mockTripResponse, mockTripResponseDB } from '../../manage.mock';
 import { NotFoundException } from '@nestjs/common';
+import { TripRepository } from '../../trip.repository';
 
 describe('FindOneTripHandler', () => {
   let handler: FindOneTripHandler;
 
-  const mockTripModel = {
+  const mockTripRepository = {
     findById: jest.fn(),
   };
 
@@ -18,8 +17,8 @@ describe('FindOneTripHandler', () => {
       providers: [
         FindOneTripHandler,
         {
-          provide: getModelToken(Trip.name),
-          useValue: mockTripModel,
+            provide: TripRepository,
+            useValue: mockTripRepository,
         },
       ],
     }).compile();
@@ -28,24 +27,13 @@ describe('FindOneTripHandler', () => {
   });
 
   it('should get a trip', async () => {
-    mockTripModel.findById.mockReturnValue({
-      lean: jest.fn().mockReturnValue({
-        exec: jest.fn().mockResolvedValue(mockTripResponseService),
-      }),
-    });
+    mockTripRepository.findById.mockReturnValue(mockTripResponseDB);
     const result = await handler.execute(new FindOneTripQuery('697d1ecb2ada36108b0ad534'));
     expect(result).toEqual(mockTripResponse);
   });
 
   it('should throw NotFoundException if trip does not exist', async () => {
-      const id = 'id-not-in-db';
-      mockTripModel.findById.mockReturnValue({
-        lean: jest.fn().mockReturnValue({
-            exec: jest.fn().mockResolvedValue(null),
-        }),
-      });
-  
-      await expect(handler.execute(new FindOneTripQuery('id-not-in-db')))
-        .rejects.toThrow(NotFoundException);
+     mockTripRepository.findById.mockReturnValue(null);
+      await expect(handler.execute(new FindOneTripQuery('id-not-in-db'))).rejects.toThrow(NotFoundException);
     });
 });

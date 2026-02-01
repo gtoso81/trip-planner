@@ -1,19 +1,17 @@
 import { CommandHandler, ICommandHandler } from "@nestjs/cqrs";
 import { UpdateTripCommand } from "../impl/update-trip.command";
 import { NotFoundException } from "@nestjs/common";
-import { InjectModel } from "@nestjs/mongoose";
-import { Model } from "mongoose";
 import { TripDto } from "../../../common/dto/trip.dto";
-import { Trip } from "../../schema/trip.schema";
 import { TripMapper } from "../../trip-mapper";
+import { TripRepository } from "../../trip.repository";
 
 @CommandHandler(UpdateTripCommand)
 export class UpdateTripHandler implements ICommandHandler<UpdateTripCommand> {
-  constructor(@InjectModel(Trip.name) private tripModel: Model<Trip>) {}
+  constructor(private repository: TripRepository) {}
 
   async execute(command: UpdateTripCommand): Promise<TripDto> {
     const { id, updateTrip } = command;
-    const result = await this.tripModel.findByIdAndUpdate(id, updateTrip, { new: true }).exec();
+    const result = await this.repository.update(id, updateTrip);
 
     if (!result) {
       throw new NotFoundException(`Trip ID ${id} not found`);
